@@ -25,6 +25,7 @@ const steps = [
   }, {
     id: '3',
     message: "Sure, I will help you with the following: {previousValue}",
+    trigger: '1'
   }
 ];
  
