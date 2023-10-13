@@ -30,15 +30,17 @@ const steps = [
 ];
  
 function App() {
-    return (
-        <div className="App">
-            <h1>Syllabus Chatbot</h1>
-            <ChatBot
-              style= {{height: '100vh', width: '100%'}}
-              steps={steps}
-            />
-        </div>
-    );
+  return (
+      <div className="App">
+    
+          <ChatBot
+            headerTitle = "Advanced Algorithms Syllabus Chatbot"
+            contentStyle = {{height: '85vh'}}
+            style= {{height: '100%', width: '100%'}}
+            steps={steps}
+          />
+      </div>
+  );
 }
  
 export default App;
