@@ -5,6 +5,9 @@ import ChatBot from 'react-simple-chatbot';
 // Contains basic syllabus information
 import { steps } from '../assets/steps';
 
+// Syllabus chatbot avatar
+import temocLogo from '../assets/temoc.png';
+
 function ChatbotComponent() {
     return (
         <div className="App">
@@ -13,6 +16,8 @@ function ChatbotComponent() {
                 contentStyle={{ height: '85vh' }}
                 style={{ height: '100%', width: '100%' }}
                 steps={steps}
+                botAvatar={temocLogo}
+                hideUserAvatar={true}
             />
         </div>
     );
