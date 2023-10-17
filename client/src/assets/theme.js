@@ -4,8 +4,8 @@ export const theme = {
     headerBgColor: '#f39036',
     headerFontColor: '#fff',
     headerFontSize: '15px',
-    botBubbleColor: '#ed9133',
+    botBubbleColor: '#ea831a',
     botFontColor: '#fff',
-    userBubbleColor: '#46695d',
+    userBubbleColor: '#2d5948',
     userFontColor: '#ffffff',
 };  
