@@ -1,5 +1,5 @@
 // Imports chatbot from other file
-import ChatbotComponent from "./chatbot";
+import ChatbotComponent from "./components/chatbot";
 
 function App() {
   return (
