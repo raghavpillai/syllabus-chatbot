@@ -23,6 +23,8 @@ function ChatbotComponent() {
                     steps={steps}
                     botAvatar={temocLogo}
                     hideUserAvatar={true}
+                    botDelay = {600}
+                    userDelay = {600}
                 />
             </ThemeProvider>
         </div>
