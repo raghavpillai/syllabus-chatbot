@@ -2,10 +2,12 @@ from fastapi import FastAPI
 from typing import Dict, Any
 
 from src.util.response import Response
+from src.model.openai_module import OpenAI
 
 app: FastAPI = FastAPI()
 
 API_V1_ENDPOINT = "/api/v1"
+OPENAI_V1_ENDPOINT = "/openai/v1"
 
 # Routes
 @app.get("/")
@@ -26,5 +28,13 @@ async def main() -> Dict[str, Any]:
         message={
             "hello2": "world2"
         }
+    )
+    return res.response()
+
+@app.get(f"{OPENAI_V1_ENDPOINT}/")
+async def main(messages: list[Dict]) -> Dict[str, Any]:
+    res: Response = Response(
+        success=True,
+        message=OpenAI.get_completion(messages)
     )
     return res.response()
