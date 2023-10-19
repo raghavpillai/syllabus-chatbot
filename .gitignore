@@ -1,0 +1,7 @@
+# Python
+__pycache__/
+.venv/
+.env
+
+# Misc
+.DS_Store
