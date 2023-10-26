@@ -23,10 +23,13 @@ class OpenAI:
     
     @classmethod
     def get_single_completion(cls, message: str) -> str:
-        cls.messages.append({"role": "user", "content": message})
+        # cls.messages.append({"role": "user", "content": message})
         completion: openai.Completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=cls.messages
+            # messages=cls.messages
+            messages= [
+                {"role": "user", "content": message}
+            ]
         )
         return completion.choices[0].message.content
     

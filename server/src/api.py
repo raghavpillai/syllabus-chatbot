@@ -2,11 +2,26 @@ from fastapi import FastAPI
 from typing import Dict, Any
 from src.util.response import Response
 from src.model.openai_model import OpenAI
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app: FastAPI = FastAPI()
 
 API_V1_ENDPOINT = "/api/v1"
 OPENAI_V1_ENDPOINT = "/openai/v1"
+
+origins = [
+    "http://localhost",        
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],   
+    allow_headers=["*"],   
+)
 
 # Routes
 @app.get("/")

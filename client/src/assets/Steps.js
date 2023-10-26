@@ -7,7 +7,7 @@ class Question extends Component {
     super(props);
 
     this.state = {
-      response: null,
+      answer: null,
       error: null,
     };
   }
@@ -17,18 +17,16 @@ class Question extends Component {
     const { query } = steps;
     console.log('Starting API call');
     this.setState({ query: query.value });
-    console.log(query.value)
-    console.log(typeof query.value)
     axios({
       method: "GET",
-      url: "http://127.0.0.1:5000/hello",
+      url: "http://127.0.0.1:8000/openai/v1/get_response",
       params: {
-        userQuery: query.value,
+        message: query.value,
       },
     })
       .then((response) => {
-        console.log('API response:', response);
-        this.setState({ response: response.data.message.content});
+        this.setState({ answer: response.data.data});
+        console.log("response produced")
       })
       .catch((error) => {
         console.error('API error:', error);
@@ -37,14 +35,14 @@ class Question extends Component {
   }
 
     render() {
-        const { response, error, query } = this.state;
+        const { answer, error, query } = this.state;
 
         return (
             <div>
                 {error ? (
                     <div>Error: {error}</div>
                 ) : (
-                    <div>{response}</div>
+                    <div>{answer}</div>
                 )}
             </div>
         );
