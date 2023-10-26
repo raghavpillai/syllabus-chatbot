@@ -1,4 +1,65 @@
-export const steps = [
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import axios from "axios";
+
+class Question extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      response: null,
+      error: null,
+    };
+  }
+
+  componentDidMount() {
+    const { steps } = this.props;
+    const { query } = steps;
+    console.log('Starting API call');
+    this.setState({ query: query.value });
+    console.log(query.value)
+    console.log(typeof query.value)
+    axios({
+      method: "GET",
+      url: "http://127.0.0.1:5000/hello",
+      params: {
+        userQuery: query.value,
+      },
+    })
+      .then((response) => {
+        console.log('API response:', response);
+        this.setState({ response: response.data.message.content});
+      })
+      .catch((error) => {
+        console.error('API error:', error);
+        this.setState({ error: "An error occurred." });
+      });
+  }
+
+    render() {
+        const { response, error, query } = this.state;
+
+        return (
+            <div>
+                {error ? (
+                    <div>Error: {error}</div>
+                ) : (
+                    <div>{response}</div>
+                )}
+            </div>
+        );
+    }
+}
+
+Question.propTypes = {
+    steps: PropTypes.object,
+    };
+    
+    Question.defaultProps = {
+    steps: undefined,
+    };
+
+export const Steps = [
     {
         id: '0',
         message: 'Hello!',
@@ -64,16 +125,27 @@ export const steps = [
     {
         id: '9',
         message: "What question do you have about advanced algorithms?",
-        trigger: '10'
+        trigger: 'query'
     },
     {
-        id: '10',
+        id: 'query',
         user: true,
-        trigger: '11'
+        trigger: 'answer'
     },
     {
-        id: '11',
-        message: "Sure, I will help you with the following: {previousValue}",
-        trigger: '1'
+        id: 'answer',
+        component:  <Question />,
+        asMessage: true,
+        trigger:'10'
+    },
+    {
+        id:'10',
+        delay:5000,
+        message: "What else would you like help with?",
+        trigger:'2'
     }
 ];
+
+
+
+
