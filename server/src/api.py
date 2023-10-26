@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from typing import Dict, Any
-
 from src.util.response import Response
-from server.src.model.openai_model import OpenAI
+from src.model.openai_model import OpenAI
 
 app: FastAPI = FastAPI()
 
