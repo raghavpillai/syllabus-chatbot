@@ -2,4 +2,13 @@ GET http://127.0.0.1:8000/api/v1/
 
 ### 
 
-GET http://127.0.0.1:8000/
+GET http://127.0.0.1:8000/api/v1/
+
+###
+
+POST http://127.0.0.1:8000/api/v1/get_response
+Content-Type: application/json
+
+{
+    "message": "What class is this?"
+}
