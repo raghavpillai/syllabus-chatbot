@@ -20,6 +20,7 @@ function ChatbotComponent() {
             <ThemeProvider theme={theme}>
                 <ChatBot
                     headerTitle="Advanced Algorithms Syllabus Chatbot"
+                    recognitionEnable={true}
                     contentStyle={{ height: '85vh' }}
                     style={{ height: '100%', width: '100%' }}
                     steps={Steps}
