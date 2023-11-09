@@ -35,7 +35,7 @@ class Question extends Component {
   }
 
     render() {
-        const { answer, error, query } = this.state;
+        const { answer, error} = this.state;
 
         return (
             <div>
@@ -84,42 +84,18 @@ export const Steps = [
         id: '3',
         message: "Sure, which syllabus topic do you need help with?",
         trigger: '4'
-    }, {
-
+    }, 
+    {
         id: '4',
-        options: [
-            { value: "Meeting Times", label: 'Meeting Times', trigger: '5' },
-            { value: "Exam Dates", label: 'Exam Dates', trigger: '6' },
-            { value: "Professor Information", label: 'Professor Information', trigger: '7' },
-            { value: "Other", label: 'Other', trigger: '8' },
-        ],
+        user: true,
+        trigger: '5'
     },
     {
         id: '5',
-        message: "This class meets on Tuesdays & Thursdays 10:00 am – 11:15 am",
-        trigger: '1'
+        message: "Placeholder Syllabus respone",
+        trigger: '10'
     },
-    {
-        id: '6',
-        message: "Exam 1: October 3, Exam 2: November 7, Exam 3: December 12",
-        trigger: '1'
-    },
-    {
-        id: '7',
-        message: "Name: Anjum Chida \n" +
-            "Phone: 972-883-2185\n" +
-            "Email: anjum.chida@utdallas.edu\n" +
-            "Office: ECSS 4.230\n" +
-            "Office Hours: In-person 10:00 am to 12:00 noon\n" +
-            "(Mondays & Wednesdays)\n" +
-            "(Or by appointment, additional meetings can be virtual via MS-Teams)",
-        trigger: '1'
-    },
-    {
-        id: '8',
-        message: "PlaceHolder",
-        trigger: '1'
-    },
+    
     {
         id: '9',
         message: "What question do you have about advanced algorithms?",
@@ -138,7 +114,6 @@ export const Steps = [
     },
     {
         id:'10',
-        delay:5000,
         message: "What else would you like help with?",
         trigger:'2'
     }
