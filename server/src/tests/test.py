@@ -2,7 +2,7 @@ import json
 import httpx
 import requests
 
-BASE_URL = 'http://localhost:8000'
+BASE_URL = 'http://localhost:8080'
 ENDPOINT = 'api/response'
 SINGLE_URL = f"{BASE_URL}/{ENDPOINT}/single"
 STREAM_URL = f"{BASE_URL}/{ENDPOINT}/stream"
@@ -15,7 +15,7 @@ class Test:
         body: dict[str, str] = {
             "message": query
         }
-        request: requests.Response = requests.get(SINGLE_URL, json=body)
+        request: requests.Response = requests.post(SINGLE_URL, json=body)
         response: dict[str, str] = request.json()
         response_data: str = response.get("data")
         print(response_data)
@@ -26,7 +26,7 @@ class Test:
             "message": query
         }
 
-        with httpx.stream('GET', STREAM_URL, json=body, timeout=None) as response:
+        with httpx.stream('POST', STREAM_URL, json=body, timeout=None) as response:
             for chunk in response.iter_raw():
                 decoded_chunk: str = chunk.decode('utf-8')
                 chunk_data: dict[str, str] = json.loads(decoded_chunk)

@@ -48,9 +48,10 @@ async def response(body: dict = Body(...)) -> dict[str, Any]:
     )
     return res.response()
 
-@app.get(f"{API_ENDPOINT}/response/stream")
+@app.post(f"{API_ENDPOINT}/response/stream")
 async def response(body: dict = Body(...)) -> StreamingResponse:
     message: str = body.get("message")
+    print(message)
     return StreamingResponse(OpenAIModel.ask_question_stream(message), media_type='text/event-stream')
 
 OpenAIModel.initialize()

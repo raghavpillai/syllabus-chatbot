@@ -1,15 +1,16 @@
 import os
 import json
-import openai
+from openai import OpenAI
 from PyPDF2 import PdfReader
-from pathlib import Path
 from dotenv import load_dotenv
 
 from ..config import Config
 
 load_dotenv()
 OPENAI_API_KEY = Config.OPENAI_API_KEY
-openai.api_key = OPENAI_API_KEY
+client = OpenAI(
+    api_key=OPENAI_API_KEY
+)
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 RESOURCE_PATH = os.path.join(CURRENT_DIR, '..', 'resources')
@@ -38,19 +39,21 @@ class OpenAIModel:
     def ask_question_single(cls, prompt: str) -> str:
         try:
             cls.messages.append({"role": "user", "content": prompt})
-            response: openai.ChatCompletion = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model='gpt-4-1106-preview',
                 messages=cls.messages,
             )
-            return response.choices[0].message.content
-        except openai.error.OpenAIError as e:
+            response_content: str = response.choices[0].message.content
+            cls.messages.append({"role": "assistant", "content": response_content})
+            return response_content
+        except Exception as e:
             return str(e)
         
     @classmethod
     def ask_question_stream(cls, prompt: str):
         try:
             cls.messages.append({"role": "user", "content": prompt})
-            response: openai.ChatCompletion = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model='gpt-4-1106-preview',
                 messages=cls.messages,
                 stream=True
@@ -58,16 +61,16 @@ class OpenAIModel:
             response_text: str = ""
             yield json.dumps({"type": "start", "content": True})
             for chunk in response:
-                delta: dict[str, str] = chunk.choices[0].delta
-                if delta.get("content") is None:
+                content: str = chunk.choices[0].delta.content or ""
+                if content is None:
                     continue
-                content: str = delta.get("content")
                 response_text += content
                 
                 yield json.dumps({"type": "partial", "content": content})
-                
+            
+            cls.messages.append({"role": "assistant", "content": response_text})
             yield json.dumps({"type": "full", "content": response_text})
-        except openai.error.OpenAIError as e:
+        except Exception as e:
             print(e)
 
 if __name__ == '__main__':
