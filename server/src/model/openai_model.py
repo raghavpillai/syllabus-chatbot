@@ -2,13 +2,11 @@ import os
 import json
 from openai import OpenAI
 from PyPDF2 import PdfReader
-from dotenv import load_dotenv
 
 from ..config import Config
 
-load_dotenv()
 OPENAI_API_KEY = Config.OPENAI_API_KEY
-client = OpenAI(
+client: OpenAI = OpenAI(
     api_key=OPENAI_API_KEY
 )
 
@@ -39,7 +37,7 @@ class OpenAIModel:
     def ask_question_single(cls, prompt: str) -> str:
         try:
             cls.messages.append({"role": "user", "content": prompt})
-            response = client.chat.completions.create(
+            response: dict = client.chat.completions.create(
                 model='gpt-4-1106-preview',
                 messages=cls.messages,
             )
@@ -53,7 +51,7 @@ class OpenAIModel:
     def ask_question_stream(cls, prompt: str):
         try:
             cls.messages.append({"role": "user", "content": prompt})
-            response = client.chat.completions.create(
+            response: dict = client.chat.completions.create(
                 model='gpt-4-1106-preview',
                 messages=cls.messages,
                 stream=True
