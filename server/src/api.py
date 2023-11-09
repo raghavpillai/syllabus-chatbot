@@ -1,9 +1,10 @@
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict, Any
+from fastapi.responses import StreamingResponse
 
-from src.util.response import Response
-from src.model.openai_model import OpenAI
+from .util.response import Response
+from .model.openai_model import OpenAIModel
+from typing import Any
 
 app: FastAPI = FastAPI()
 origins = ["*"]
@@ -15,10 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_V1_ENDPOINT = "/api/v1"
+API_ENDPOINT = "/api"
 
 @app.get("/")
-async def default() -> Dict[str, Any]:
+async def default() -> dict[str, Any]:
     res: Response = Response(
         success=True,
         message={
@@ -28,8 +29,8 @@ async def default() -> Dict[str, Any]:
     return res.response()
     
 
-@app.get(f"{API_V1_ENDPOINT}/")
-async def main() -> Dict[str, Any]:
+@app.get(f"{API_ENDPOINT}/")
+async def main() -> dict[str, Any]:
     res: Response = Response(
         success=True,
         message={
@@ -38,21 +39,18 @@ async def main() -> Dict[str, Any]:
     )
     return res.response()
 
-@app.get(f"{API_V1_ENDPOINT}/test")
-async def main(messages: list[Dict]) -> Dict[str, Any]:
-    res: Response = Response(
-        success=True,
-        message=OpenAI.get_completion(messages)
-    )
-    return res.response()
-
-@app.post(f"{API_V1_ENDPOINT}/get_response")
-async def get_response(body: Dict = Body(...)) -> Dict[str, Any]:
+@app.get(f"{API_ENDPOINT}/response/single")
+async def response(body: dict = Body(...)) -> dict[str, Any]:
     message: str = body.get("message")
     res: Response = Response(
         success=True,
-        message=OpenAI.get_single_completion(message)
+        message=OpenAIModel.ask_question_single(message)
     )
     return res.response()
 
-OpenAI.initialize()
+@app.get(f"{API_ENDPOINT}/response/stream")
+async def response(body: dict = Body(...)) -> StreamingResponse:
+    message: str = body.get("message")
+    return StreamingResponse(OpenAIModel.ask_question_stream(message), media_type='text/event-stream')
+
+OpenAIModel.initialize()
