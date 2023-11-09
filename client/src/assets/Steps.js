@@ -21,7 +21,7 @@ class Question extends Component {
       method: "GET",
       url: "http://127.0.0.1:8000/openai/v1/get_response",
       params: {
-        message: query.value,
+        message: "Give a short response: " + query.value,
       },
     })
       .then((response) => {
