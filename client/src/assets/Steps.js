@@ -109,6 +109,7 @@ export const Steps = [
     {
         id: 'answer',
         component:  <Question />,
+        delay:5000,
         asMessage: true,
         trigger:'10'
     },
