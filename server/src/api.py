@@ -1,31 +1,25 @@
-from fastapi import FastAPI
-from typing import Dict, Any
-from src.util.response import Response
-from src.model.openai_model import OpenAI
+from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
+from .util.response import Response
+from .model.openai_model import OpenAIModel
+from typing import Any
 
 app: FastAPI = FastAPI()
-
-API_V1_ENDPOINT = "/api/v1"
-OPENAI_V1_ENDPOINT = "/openai/v1"
-
-origins = [
-    "http://localhost",        
-    "http://localhost:3000"
-]
-
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],   
-    allow_headers=["*"],   
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Routes
+API_ENDPOINT = "/api"
+
 @app.get("/")
-async def default() -> Dict[str, Any]:
+async def default() -> dict[str, Any]:
     res: Response = Response(
         success=True,
         message={
@@ -35,8 +29,8 @@ async def default() -> Dict[str, Any]:
     return res.response()
     
 
-@app.get(f"{API_V1_ENDPOINT}/")
-async def main() -> Dict[str, Any]:
+@app.get(f"{API_ENDPOINT}/")
+async def main() -> dict[str, Any]:
     res: Response = Response(
         success=True,
         message={
@@ -45,18 +39,19 @@ async def main() -> Dict[str, Any]:
     )
     return res.response()
 
-@app.get(f"{OPENAI_V1_ENDPOINT}/")
-async def main(messages: list[Dict]) -> Dict[str, Any]:
+@app.get(f"{API_ENDPOINT}/response/single")
+async def response(body: dict = Body(...)) -> dict[str, Any]:
+    message: str = body.get("message")
     res: Response = Response(
         success=True,
-        message=OpenAI.get_completion(messages)
+        message=OpenAIModel.ask_question_single(message)
     )
     return res.response()
 
-@app.get(f"{OPENAI_V1_ENDPOINT}/get_response")
-async def get_response(message: str) -> Dict[str, Any]:
-    res: Response = Response(
-        success=True,
-        message=OpenAI.get_single_completion(message)
-    )
-    return res.response()
+@app.post(f"{API_ENDPOINT}/response/stream")
+async def response(body: dict = Body(...)) -> StreamingResponse:
+    message: str = body.get("message")
+    print(message)
+    return StreamingResponse(OpenAIModel.ask_question_stream(message), media_type='text/event-stream')
+
+OpenAIModel.initialize()

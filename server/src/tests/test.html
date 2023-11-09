@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Syllabus chatbot</title>
+    <style>
+      body {
+        background-color: black;
+        color: white;
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      .chat-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+      }
+      #chat-form > input {
+        width: calc(100% - 110px);
+        padding: 10px;
+        margin-right: 10px;
+      }
+      #chat-form > button {
+        width: 100px;
+        padding: 10px;
+      }
+      .chat-history {
+        margin: 20px 0;
+        padding: 10px;
+        background: #333;
+        height: 300px;
+        overflow-y: auto;
+      }
+      .chat-message {
+        margin: 5px 0;
+        padding: 5px;
+        border-radius: 5px;
+        background: #555;
+      }
+      .chat-message.you {
+        text-align: right;
+      }
+      .chat-message.chatbot {
+        text-align: left;
+      }
+    </style>
+    <script>
+      function handleStreamResponse(response) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let currentMessageContent = "";
+
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            console.log("Stream complete");
+            return;
+          }
+
+          const chunk = decoder.decode(value, { stream: true });
+          try {
+            const chunkData = JSON.parse(chunk);
+            const chunkType = chunkData.type;
+            const chunkContent = chunkData.content;
+
+            if (chunkType === "partial") {
+              currentMessageContent += chunkContent;
+            } else if (chunkType === "full") {
+              const chatHistory = document.getElementById("chat-history");
+              const messageDiv = document.createElement("div");
+              messageDiv.classList.add("chat-message", "chatbot");
+              messageDiv.textContent = `Chatbot: ${currentMessageContent}`;
+              chatHistory.appendChild(messageDiv);
+              chatHistory.scrollTop = chatHistory.scrollHeight;
+              currentMessageContent = "";
+            }
+          } catch (e) {
+            console.error("Error parsing chunk", e);
+          }
+
+          reader.read().then(processText);
+        });
+      }
+
+      function sendQuery(query) {
+        const STREAM_URL = "http://localhost:8080/api/response/stream";
+        fetch(STREAM_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: query }),
+        })
+          .then(handleStreamResponse)
+          .catch(console.error);
+
+        const chatHistory = document.getElementById("chat-history");
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("chat-message", "you");
+        messageDiv.textContent = `You: ${query}`;
+        chatHistory.appendChild(messageDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("chat-form");
+        const messageBox = document.getElementById("message-box");
+
+        form.onsubmit = function (event) {
+          event.preventDefault();
+          if (messageBox.value.trim() !== "") {
+            sendQuery(messageBox.value);
+            messageBox.value = "";
+          }
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div class="chat-container">
+      <h1>Chatbot Interface</h1>
+      <div id="chat-history" class="chat-history"></div>
+      <form id="chat-form">
+        <input
+          type="text"
+          id="message-box"
+          placeholder="Type your message here..."
+          required
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </body>
+</html>
