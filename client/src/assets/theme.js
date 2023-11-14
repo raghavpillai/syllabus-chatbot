@@ -1,5 +1,5 @@
 export const theme = {
-    background: '#3A3B3C',
+    background: '#e8eceb',
     fontFamily: 'Helvetica Neue',
     headerBgColor: '#f39036',
     headerFontColor: '#fff',
