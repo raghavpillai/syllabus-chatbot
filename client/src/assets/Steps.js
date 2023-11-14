@@ -26,11 +26,13 @@ class Question extends Component {
     })
       .then((response) => {
         this.setState({ answer: response.data.data});
-        console.log("response produced")
+        console.log("response produced");
+        this.props.triggerNextStep({trigger: '10'});
       })
       .catch((error) => {
         console.error('API error:', error);
         this.setState({ error: "An error occurred." });
+        this.props.triggerNextStep({trigger: '10'});
       });
   }
 
@@ -109,9 +111,8 @@ export const Steps = [
     {
         id: 'answer',
         component:  <Question />,
-        delay:5000,
         asMessage: true,
-        trigger:'10'
+        waitAction: true
     },
     {
         id:'10',
