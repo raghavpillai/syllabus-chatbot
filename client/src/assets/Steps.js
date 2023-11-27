@@ -27,12 +27,12 @@ class Question extends Component {
       .then((response) => {
         this.setState({ answer: response.data.data});
         console.log("response produced");
-        this.props.triggerNextStep({trigger: '10'});
+        this.props.triggerNextStep({trigger: '1'});
       })
       .catch((error) => {
         console.error('API error:', error);
         this.setState({ error: "An error occurred." });
-        this.props.triggerNextStep({trigger: '10'});
+        this.props.triggerNextStep({trigger: '1'});
       });
   }
 
@@ -62,7 +62,7 @@ Question.propTypes = {
 export const Steps = [
     {
         id: '0',
-        message: 'Hello!',
+        message: 'Hello! This chatbot answers questions regarding advanced algorithm concepts as well as syllabus questions about CS4349.',
 
         // This calls the next id
         // i.e. id 1 in this case
@@ -70,37 +70,7 @@ export const Steps = [
     },
     {
         id: '1',
-        message: 'What would you like help with?',
-
-        // This calls the next id
-        // i.e. id 1 in this case
-        trigger: '2',
-    }, {
-        id: '2',
-        options: [
-            { value: "advanced algroithm concepts", label: 'Concepts', trigger: '9' },
-            { value: "questions about the syllabus", label: 'Syllabus Question', trigger: '3' },
-        ],
-    },
-    {
-        id: '3',
-        message: "Sure, which syllabus topic do you need help with?",
-        trigger: '4'
-    }, 
-    {
-        id: '4',
-        user: true,
-        trigger: '5'
-    },
-    {
-        id: '5',
-        message: "Placeholder Syllabus respone",
-        trigger: '10'
-    },
-    
-    {
-        id: '9',
-        message: "What question do you have about advanced algorithms?",
+        message: "What is your question?",
         trigger: 'query'
     },
     {
@@ -113,11 +83,6 @@ export const Steps = [
         component:  <Question />,
         asMessage: true,
         waitAction: true
-    },
-    {
-        id:'10',
-        message: "What else would you like help with?",
-        trigger:'2'
     }
 ];
 
