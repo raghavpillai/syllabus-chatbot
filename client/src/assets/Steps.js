@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import Latex from "react-latex";
 import 'katex/dist/katex.min.css';
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import Latex from "react-latex";
 
 class Question extends Component {
   constructor(props) {
@@ -24,17 +24,36 @@ class Question extends Component {
     }
 
     const result = this.decoder.decode(value);
+    
+    let fullResponse = false;
     try {
-      const data = JSON.parse(result);
+      let data = "";
+      try {
+        data = JSON.parse(result);
+      } catch (error) {
+        const chunks = result.split('}{').map((chunk, index, array) => {
+          if (index !== 0) chunk = '{' + chunk;
+          if (index !== array.length - 1) chunk = chunk + '}';
+          return JSON.parse(chunk);
+        });
+        data = chunks[chunks.length - 1];
+      }
 
       if (data.type === "partial") {
         this.setState({ answer: data.content });
       } else if (data.type === "full") {
         this.setState({ answer: data.content });
+        fullResponse = data.content;
+        console.log("Got full response " + data.content);
       }
     } catch (error) {
+      console.log(result)
       console.error("Error parsing JSON:", error);
     }
+    if (fullResponse !== false) {
+      this.setState({ answer: fullResponse });
+    }
+    console.log(this.state.answer)
 
     return this.reader.read().then(this.processText);
   }
